@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="zh_CN" ng-app>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>仿 IOS 锁屏通知效果</title>
+  <link rel="stylesheet" href="./index.css">
+</head>
+<body>
+  <div class="body" ng-init="data=[1,2,3,4];toggle=false">
+    <div class="header" ng-click="toggle=!toggle"></div>
+    <div class="maint" ng-class="{'collspan':toggle}">
+      <div class="notification"
+         ng-style="{'top':  ($index * 80) + 'px'}"
+         ng-repeat="d in data">
+        <div class="ct"></div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.bootcss.com/angular.js/1.7.5/angular.min.js"></script>
+</body>
+</html>
