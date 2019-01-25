@@ -1,0 +1,70 @@
+html,body {
+  margin: 0;
+  padding: 0;
+}
+.card {
+  padding: 10px 15px;
+  margin: 20px;
+  background-color: #EAF7FF;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+.card:hover .buttons button {
+  animation: wave 400ms;
+}
+.card .buttons button {
+  position: relative;
+  width: 75px;
+  height: 35px;
+  border: 0 none;
+  outline: 0 none;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  transition: transform 400ms ease-in-out;
+}
+.card .buttons button:active {
+  opacity: 0.8;
+}
+.card .buttons button:nth-of-type(1) {
+  background-color: #FE6728;
+  border-radius: 35px 0 0 35px;
+  margin-right: 23px;
+  padding-left: 20px;
+}
+.card .buttons button:nth-of-type(2) {
+  background-color: #199AFE;
+  border-radius: 0 35px 35px 0;
+  padding-right: 20px;
+  animation-delay: 200ms;
+}
+.card .buttons button:after {
+  content: '';
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  height: 35px;
+  width: 20px;
+  border-radius: 4px;
+  transform: skewX(-20deg);
+}
+.card .buttons button:nth-of-type(1):after {
+  right: -10px;
+  background-color: #FE6728;
+}
+.card .buttons button:nth-of-type(2):after {
+  left: -10px;
+  background-color: #199AFE;
+}
+
+@keyframes wave {
+  0% {
+    transform: translate3d(0,0,0) scale(1);
+  }
+  50% {
+    transform: translate3d(0,0,0) scale(1.08);
+  }
+  100% {
+    transform: translate3d(0,0,0) scale(1);
+  }
+}
