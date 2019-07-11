@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="referrer" content="no-referrer"/>
+  <title>Masonry</title>
+  <style>
+    .grid-sizer, .grid-item { width: calc((100% - 20px) / 2); }
+    .grid-item { box-sizing: border-box; padding: 20px; margin-bottom: 10px; border: 1px solid #cccccc; border-radius: 4px; }
+    .img-wrapper { margin: -20px -20px 20px; }
+    .img-wrapper img { max-width: 100%; }
+    .more { padding: 20px 0; text-align: center; }
+    .more button { padding: 10px 50px; background-color: #fff; border: 1px solid #cacaca; border-radius: 50px; color: #9a9a9a; outline: none; cursor: pointer; }
+    .more button:hover { border-color: #9a9a9a; color: #333333; }
+  </style>
+</head>
+<body>
+  <div id="app">
+      <div class="grid">
+        <div class="grid-sizer"></div>
+        <masonry-item v-for="item in items" @masonry-item-added="masonryRedrawHandler">
+          <div class="grid-item" @click="remove">
+            <div class="img-wrapper">
+              <img :src="item.bimageuri" alt="" onerror="this.src = 'https://via.placeholder.com/400x300?text=400x300'">
+            </div>
+            <div>{{ item.text }}</div>
+          </div>
+        </masonry-item>
+      </div>
+      <div class="more">
+        <button @click="loadMore">加载更多...</button>
+      </div>
+  </div>
+  <script src="libs/vue/dist/vue.min.js"></script>
+  <script src="libs/axios/dist/axios.min.js"></script>
+  <script src="libs/imagesloaded/imagesloaded.pkgd.min.js"></script>
+  <script src="libs/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="libs/lodash/dist/lodash.min.js"></script>
+  <script>
+    Vue.component('MasonryItem', {
+      props: [ 'item' ],
+      template: '<slot></slot>',
+      mounted: function () {
+        const self = this;
+        imagesLoaded( self.$el, function () {
+          console.log('imagesLoaded', this);
+          self.$emit('masonry-item-added', this.elements[0]);
+        })
+      }
+    });
+    new Vue({
+      el: '#app',
+      data: function () {
+        return {
+          items: [],
+          pageIndex: 1
+        };
+      },
+      created: function () {
+        this._init();
+        this._load();
+      },
+      methods: {
+        _load: function () {
+          // this.items = this._random();
+          // axios.get('https://www.apiopen.top/satinApi', {
+          //   params: {
+          //     type: 1,
+          //     page: this.pageIndex
+          //   }
+          // })
+          // .then(({ data }) => {
+          //   if (this.pageIndex === 1) {
+          //     this.items = data.data;
+          //   } else {
+          //     this.items = this.items.concat(data.data);
+          //   }
+          // });
+          axios.get('https://api.apiopen.top/getImages', {
+            params: {
+              page: this.pageIndex
+            }
+          })
+          .then(({ data }) => {
+            let d = [];
+            d = data.result.map(item => {
+              return {
+                id: _.uniqueId(),
+                text: item.time,
+                bimageuri: item.img
+              };
+            })
+            if (this.pageIndex === 1) {
+              this.items = d;
+            } else {
+              this.items = this.items.concat(d);
+            }
+          })
+        },
+        masonryRedrawHandler: function () {
+          this.msnry.reloadItems();
+          this.msnry.layout();
+        },
+        _init: function () {
+          const self = this;
+          self.$nextTick(function () {
+            self.msnry = new Masonry('.grid', {
+              columnWidth: '.grid-sizer',
+              itemSelector: '.grid-item',
+              percentPosition: true,
+              gutter: 10
+            });
+          });
+        },
+        remove: function (event) {
+          this.msnry.remove(event.currentTarget);
+          this.msnry.layout();
+        },
+        loadMore: function () {
+          this.pageIndex = this.pageIndex + 1;
+          this._load();
+        }
+      }
+    });
+  </script>
+</body>
+</html>
