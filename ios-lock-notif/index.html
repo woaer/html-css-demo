@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh_CN" ng-app>
+<html lang="zh_CN" ng-app="moment">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,9 +7,13 @@
   <title>仿 IOS 锁屏通知效果</title>
   <link rel="stylesheet" href="./index.css">
 </head>
-<body>
+<body ng-controller="HomeCtrl">
   <div class="body" ng-init="data=[1,2,3,4];toggle=false">
-    <div class="header" ng-click="toggle=!toggle"></div>
+    <div class="header" ng-click="toggle=!toggle">
+      <div ng-bind="time()">21:18</div>
+      <div ng-bind="date">7月16日 星期二</div>
+      <div ng-bind="rdate">已亥年六月十四</div>
+    </div>
     <div class="maint" ng-class="{'collspan':toggle}">
       <div class="notification"
          ng-style="{'top':  ($index * 80) + 'px'}"
@@ -19,5 +23,26 @@
     </div>
   </div>
   <script src="https://cdn.bootcss.com/angular.js/1.7.5/angular.min.js"></script>
+  <script src="libs/calendar.js"></script>
+  <script src="libs/moment/min/moment-with-locales.min.js"></script>
+  <script>
+    angular.module('moment', [])
+      .config(function () {
+        moment.locale('zh-cn')
+      })
+      .controller('HomeCtrl', [ '$scope', '$interval', function ($scope, $interval) {
+        $scope.m = moment();
+        $scope.time = function () { return $scope.m.format('HH:mm'); };
+        $scope.date = $scope.m.format('M月D日 dddd');
+        $scope.rdate = (function (m) {
+          let lunar = calendar.solar2lunar(m.year(), m.month() + 1, m.date());
+          return `${lunar.gzYear}年${lunar.IMonthCn}${lunar.IDayCn}`; 
+        })($scope.m);
+
+        $interval(function () {
+          $scope.m = moment();
+        }, 1000);
+      }]);
+  </script>
 </body>
 </html>
