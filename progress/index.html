@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="referrer" content="no-referrer" />
+  <title>进度条</title>
+  <style>
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .br {
+      border-radius: 4px;
+    }
+
+    .progress {
+      width: 90%;
+      height: 15px;
+      background-color: #E2E2E2;
+      box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1) inset;
+    }
+
+    .progress .progress-bar {
+      position: relative;
+      width: 0;
+      height: 100%;
+      padding: 1px;
+      background-image: linear-gradient(90deg, #429100, #A7D40D);
+      box-sizing: border-box;
+      transition: width .6s ease;
+    }
+
+    .progress .progress-bar:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      width: 100%;
+      height: 48%;
+      background-color: rgba(255, 255, 255, 0.26);
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+    }
+
+    .progress .progress-bar:after {
+      content: '';
+      display: block;
+      width: 100%;
+      height: 100%;
+      background-image: linear-gradient(90deg, #5AC800, #CEEC32);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="progress br">
+    <div class="progress-bar br"></div>
+  </div>
+
+  <script>
+    window.addEventListener('load', function () {
+      var dom = document.querySelector('.progress-bar');
+      var w = 0;
+      var t = setInterval(() => {
+        w += ~~(Math.random() * 10);
+        if (w > 100) {
+          w = 100;
+          clearInterval(t);
+        }
+        dom.style.width = `${w}%`;
+      }, 720);
+    })
+  </script>
+
+</body>
+
+</html>
