@@ -45,7 +45,6 @@
       mounted: function () {
         const self = this;
         imagesLoaded( self.$el, function () {
-          console.log('imagesLoaded', this);
           self.$emit('masonry-item-added', this.elements[0]);
         })
       }
@@ -55,7 +54,7 @@
       data: function () {
         return {
           items: [],
-          pageIndex: 1
+          pageIndex: Array.from(new Array(35).keys()).slice(1).sort(() => Math.random() > 0.5)
         };
       },
       created: function () {
@@ -64,39 +63,26 @@
       },
       methods: {
         _load: function () {
-          // this.items = this._random();
-          // axios.get('https://www.apiopen.top/satinApi', {
-          //   params: {
-          //     type: 1,
-          //     page: this.pageIndex
-          //   }
-          // })
-          // .then(({ data }) => {
-          //   if (this.pageIndex === 1) {
-          //     this.items = data.data;
-          //   } else {
-          //     this.items = this.items.concat(data.data);
-          //   }
-          // });
+          var randomPage = this.pageIndex.pop();
           axios.get('https://api.apiopen.top/getImages', {
             params: {
-              page: this.pageIndex
+              page: randomPage
             }
           })
           .then(({ data }) => {
-            let d = [];
-            d = data.result.map(item => {
+            var ret = data.result;
+            if (randomPage == 32) {
+              // 32 页前 14 张图片 404，剔除
+              ret = ret.slice(14);
+            }
+            let d = ret.map(item => {
               return {
                 id: _.uniqueId(),
                 text: item.time,
                 bimageuri: item.img
               };
-            })
-            if (this.pageIndex === 1) {
-              this.items = d;
-            } else {
-              this.items = this.items.concat(d);
-            }
+            });
+            this.items = this.items.concat(d);
           })
         },
         masonryRedrawHandler: function () {
@@ -119,7 +105,6 @@
           this.msnry.layout();
         },
         loadMore: function () {
-          this.pageIndex = this.pageIndex + 1;
           this._load();
         }
       }
